@@ -62,3 +62,41 @@ for col in multi_select_cols:
 import matplotlib.pyplot as plt
 binary_columns = [col for col in df.columns if '—' in col]
 totals = df[binary_columns].sum().sort_values(ascending=False)
+
+import matplotlib.pyplot as plt
+import matplotlib.ticker as mtick
+import numpy as np
+
+plt.figure(figsize=(14, 9))
+
+colors = plt.cm.viridis(np.linspace(0.2, 0.8, len(totals)))
+
+bars = totals.plot(kind='bar', color=colors, edgecolor='black', linewidth=0.8)
+
+plt.title('Frequency of Selected Activities Across Agencies', fontsize=20, weight='bold', pad=20)
+plt.suptitle('Survey of Agency Responsibilities and Practices', fontsize=14, y=0.93, alpha=0.7)
+plt.ylabel('Number of Agencies', fontsize=16, weight='bold')
+plt.xlabel('Activity', fontsize=16, weight='bold')
+
+plt.xticks(rotation=45, ha='right', fontsize=12)
+plt.yticks(fontsize=12)
+
+plt.grid(axis='y', linestyle='--', alpha=0.6)
+
+for bar in bars.patches:
+    height = bar.get_height()
+    bars.annotate(str(int(height)),
+                  xy=(bar.get_x() + bar.get_width() / 2, height),
+                  xytext=(0, 5), 
+                  textcoords="offset points",
+                  ha='center', va='bottom',
+                  fontsize=11,
+                  fontweight='bold')
+
+plt.tight_layout(rect=[0, 0, 1, 0.95]) 
+
+import os
+if not os.path.exists('plots'):
+    os.makedirs('plots')
+plt.savefig('plots/agency_activity_frequency.png', dpi=300)
+plt.show()
