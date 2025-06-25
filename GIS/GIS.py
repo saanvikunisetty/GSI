@@ -31,17 +31,27 @@ from html import unescape
 for col in multi_select_cols:
     all_options = set()
     df[col] = df[col].fillna('')
+    
     for entry in df[col]:
-        options = [opt.strip() for opt in re.split(',|;', entry) if opt.strip()]
+        cleaned_entry = re.sub(r'<.*?>', '', entry)
+        cleaned_entry = re.sub(r'title=".*?"', '', cleaned_entry)
+        cleaned_entry = re.sub(r'["“”]', '', cleaned_entry)
+        cleaned_entry = unescape(cleaned_entry)
+        options = [opt.strip() for opt in re.split(',|;', cleaned_entry) if opt.strip()]
         all_options.update(options)
+    
     new_cols = []
     for option in all_options:
-        cleaned_option = unescape(re.sub(r'<.*?>', '', option))
-        new_col_name = col + " — " + cleaned_option
+        new_col_name = col + " — " + option
         df[new_col_name] = df[col].apply(lambda x: 1 if option in x else 0)
         new_cols.append(new_col_name)
-    print("Options for: " + col)
+    
+    print("\nOptions for:", col)
     for name in new_cols:
         short = name.replace(col + " — ", "")
-        print("- " + short)
+        print("-", short)
+    
+    print("\nBinary columns created:")
+    print(df[new_cols].columns.tolist())
+    print("\nFirst few rows:")
     print(df[new_cols].head().T)
