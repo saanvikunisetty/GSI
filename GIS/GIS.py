@@ -46,12 +46,19 @@ for col in multi_select_cols:
         df[new_col_name] = df[col].apply(lambda x: 1 if option in x else 0)
         new_cols.append(new_col_name)
     
-    print("\nOptions for:", col)
+    #print("\nOptions for:", col)
     for name in new_cols:
         short = name.replace(col + " — ", "")
-        print("-", short)
+        #print("-", short)
     
-    print("\nBinary columns created:")
-    print(df[new_cols].columns.tolist())
-    print("\nFirst few rows:")
-    print(df[new_cols].head().T)
+    #print("\nBinary columns created:")
+    #print(df[new_cols].columns.tolist())
+    #print("\nFirst few rows:")
+    #print(df[new_cols].head().T)
+
+#df.to_csv('cleaned_survey_data1.csv', index=False)
+
+#Plot 1:
+import matplotlib.pyplot as plt
+binary_columns = [col for col in df.columns if '—' in col]
+totals = df[binary_columns].sum().sort_values(ascending=False)
