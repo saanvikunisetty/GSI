@@ -62,41 +62,65 @@ for col in multi_select_cols:
 import matplotlib.pyplot as plt
 binary_columns = [col for col in df.columns if '—' in col]
 totals = df[binary_columns].sum().sort_values(ascending=False)
-
-import matplotlib.pyplot as plt
-import matplotlib.ticker as mtick
-import numpy as np
-
-plt.figure(figsize=(14, 9))
-
-colors = plt.cm.viridis(np.linspace(0.2, 0.8, len(totals)))
-
-bars = totals.plot(kind='bar', color=colors, edgecolor='black', linewidth=0.8)
-
-plt.title('Frequency of Selected Activities Across Agencies', fontsize=20, weight='bold', pad=20)
-plt.suptitle('Survey of Agency Responsibilities and Practices', fontsize=14, y=0.93, alpha=0.7)
-plt.ylabel('Number of Agencies', fontsize=16, weight='bold')
-plt.xlabel('Activity', fontsize=16, weight='bold')
-
-plt.xticks(rotation=45, ha='right', fontsize=12)
-plt.yticks(fontsize=12)
-
-plt.grid(axis='y', linestyle='--', alpha=0.6)
-
-for bar in bars.patches:
-    height = bar.get_height()
-    bars.annotate(str(int(height)),
-                  xy=(bar.get_x() + bar.get_width() / 2, height),
-                  xytext=(0, 5), 
-                  textcoords="offset points",
-                  ha='center', va='bottom',
-                  fontsize=11,
-                  fontweight='bold')
-
-plt.tight_layout(rect=[0, 0, 1, 0.95]) 
-
 import os
-if not os.path.exists('plots'):
-    os.makedirs('plots')
-plt.savefig('plots/agency_activity_frequency.png', dpi=300)
-plt.show()
+
+def clean_label(label):
+    stop_phrases = [
+        "which of the following", "please select all that apply", "options for",
+        "are undertaken by your agency", "referred to in the question above",
+        "does the geographical area of your agency's jurisdiction", "please check all that apply",
+        "please select all that apply", "most common", "following the implementation of",
+        "have you observed any changes in", "the question above", "please select one"
+    ]
+
+    stopwords = set([
+        "the", "of", "and", "to", "a", "in", "for", "that", "with", "by",
+        "on", "your", "are", "or", "is", "as", "at", "this", "from", "which",
+        "any", "such", "above", "have", "been", "will", "be", "through", "other",
+        "please", "select", "all", "applicable"
+    ])
+
+    label = label.lower()
+    for phrase in stop_phrases:
+        label = label.replace(phrase, "")
+    label = re.sub(r"\s+", " ", label).strip()
+
+    if "—" in label:
+        label = label.split("—")[-1].strip()
+    elif ":" in label:
+        label = label.split(":")[-1].strip()
+    elif "(" in label and ")" in label:
+        label = re.sub(r"\(.*?\)", "", label).strip()
+
+    words = [w for w in re.findall(r"\w+", label) if w not in stopwords]
+
+    label = " ".join(words[:5])
+    label = label.title()
+    return label
+
+def plot_agency_activity_frequency(csv_path):
+    df = pd.read_csv(csv_path)
+    binary_columns = [col for col in df.columns if '—' in col]
+    totals = df[binary_columns].sum().sort_values(ascending=False)
+
+    cleaned_labels = [clean_label(str(lbl)) for lbl in totals.index]
+
+    plt.figure(figsize=(14, 9))
+    bars = plt.bar(cleaned_labels, totals.values, color=plt.cm.viridis(range(len(totals))))
+
+    plt.title('Frequency of Selected Activities Across Agencies', fontsize=18, weight='bold')
+    plt.ylabel('Number of Agencies', fontsize=14)
+    plt.xticks(rotation=45, ha='right', fontsize=11)
+    plt.tight_layout()
+
+    save_dir = 'plots'
+    if not os.path.exists(save_dir):
+        os.makedirs(save_dir)
+
+    save_path = os.path.join(save_dir, 'agency_activity_frequency.png')
+    plt.savefig(save_path, dpi=300)
+    print("Plot saved to", save_path)
+
+    plt.show()
+
+plot_agency_activity_frequency("cleaned_survey_data1.csv")
