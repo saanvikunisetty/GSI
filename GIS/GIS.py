@@ -123,4 +123,7 @@ def plot_agency_activity_frequency(csv_path):
 
     plt.show()
 
-plot_agency_activity_frequency("cleaned_survey_data1.csv")
+#plot_agency_activity_frequency("cleaned_survey_data1.csv")
+
+for i, col in enumerate(binary_columns):
+    print("%d: %s" % (i, col))
