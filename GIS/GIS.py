@@ -229,7 +229,7 @@ def plot_agency_activity_frequency(csv_path):
     plt.ylabel('Number of Agencies', fontsize=14)
 
     plt.xticks(rotation=45, ha='right', fontsize=6)
-    plt.subplots_adjust(bottom=0.35)  # Prevent label cutoff
+    plt.subplots_adjust(bottom=0.35)  
     plt.tight_layout()
 
     save_dir = 'plots'
@@ -243,3 +243,45 @@ def plot_agency_activity_frequency(csv_path):
 
 df.to_csv("cleaned_survey_data2.csv", index=False)
 plot_agency_activity_frequency("cleaned_survey_data2.csv")
+
+def load_and_prepare_df(path, rename_dict):
+    df = pd.read_csv(path)
+    df.rename(columns=rename_dict, inplace=True)
+    return df
+
+#Stormwater Management Activities Frequency Plot
+import seaborn as sns
+import numpy as np
+import matplotlib.ticker as mticker
+df = load_and_prepare_df("cleaned_survey_data2.csv", rename_dict)
+
+stormwater_cols = [
+    "Structural Practice Installation", "Other Stormwater Activities", "Stormwater Plan Review",
+    "No Stormwater Responsibility", "Infrastructure Maintenance", "Post-Construction Inspection",
+    "Long-Term Infrastructure Planning", "Engineering"
+]
+
+totals = df[stormwater_cols].sum().sort_values(ascending=True)
+
+plt.figure(figsize=(10, 6))
+sns.barplot(x=totals.values, y=totals.index, palette="Blues_d")
+
+ax = plt.gca()
+ax.xaxis.set_major_locator(mticker.MultipleLocator(5))  
+ax.xaxis.set_minor_locator(mticker.MultipleLocator(1))   
+
+ax.grid(which='minor', axis='x', linestyle='--', alpha=0.3)  
+ax.grid(which='major', axis='x', linestyle='-', alpha=0.1)  
+
+plt.title("Stormwater Management Activities", fontsize=16, weight='bold')
+plt.xlabel("Number of Agencies")
+plt.ylabel("Activity")
+plt.xticks(fontsize=10)
+plt.yticks(fontsize=10)
+plt.grid(axis='x', linestyle='--', alpha=0.4)
+plt.tight_layout()
+
+save_path = os.path.join("plots", "stormwater_activities.png")
+plt.savefig(save_path, dpi=300)
+plt.show()
+print("Saved:", save_path)
