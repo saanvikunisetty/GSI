@@ -376,7 +376,7 @@ plt.xlabel("Number of Agencies")
 ax = plt.gca()
 
 max_val = totals.max()
-ax.set_xlim(0, max_val + 5)  # Explicitly set x limits with padding
+ax.set_xlim(0, max_val + 5)  
 
 ax.xaxis.set_major_locator(mticker.MultipleLocator(5))
 ax.xaxis.set_minor_locator(mticker.MultipleLocator(1))
@@ -390,5 +390,53 @@ plt.yticks(fontsize=10)
 plt.tight_layout()
 
 save_path = os.path.join("plots", "private_property_structural_practices.png")
+plt.savefig(save_path, dpi=300)
+plt.show()
+
+#Mosquito Control Activities Frequency Plot
+
+mosquito_control_cols = [
+    "Larvicide Application",
+    "Other Mosquito Activities",
+    "Adult Mosquito Surveillance",
+    "Natural Control Agents",
+    "Mosquito Public Education",
+    "Larval Mosquito Surveillance",
+    "Direct Larval Control",
+    "Adult Mosquito Control",
+    "Source Reduction",
+    "Indirect Larval Control"
+]
+
+totals = df[mosquito_control_cols].sum().sort_values()
+
+plt.figure(figsize=(10, 6))
+
+base_color = np.array([231, 84, 128]) / 255  # A nice pink (RGB)
+num_bars = len(totals)
+colors = [base_color * (0.5 + 0.5 * (i / (num_bars - 1))) for i in range(num_bars)]
+colors = [tuple(color) for color in colors]
+
+plt.barh(totals.index, totals.values, color=colors)
+
+plt.title("Mosquito Control Activities", fontsize=16, weight='bold')
+plt.xlabel("Number of Agencies")
+
+ax = plt.gca()
+max_val = totals.max()
+ax.set_xlim(0, max_val + 5)
+
+ax.xaxis.set_major_locator(mticker.MultipleLocator(5))
+ax.xaxis.set_minor_locator(mticker.MultipleLocator(1))
+
+ax.grid(which='minor', axis='x', linestyle='--', alpha=0.3)
+ax.grid(which='major', axis='x', linestyle='-', alpha=0.1)
+
+plt.xticks(fontsize=10)
+plt.yticks(fontsize=10)
+
+plt.tight_layout()
+
+save_path = os.path.join("plots", "mosquito_control_activities.png")
 plt.savefig(save_path, dpi=300)
 plt.show()
