@@ -305,17 +305,17 @@ plt.title("Stormwater Jurisdiction Areas", fontsize=16, weight='bold')
 plt.xlabel("Number of Agencies")
 
 ax = plt.gca()
-ax.xaxis.set_major_locator(mticker.MultipleLocator(5))
-ax.xaxis.set_minor_locator(mticker.MultipleLocator(1))
 
-ax.grid(which='minor', axis='x', linestyle='--', alpha=0.3)
-ax.grid(which='major', axis='x', linestyle='-', alpha=0.1)
+max_val = totals.max()
+ax.set_xlim(0, max_val + 2)
 
-plt.xticks(fontsize=10)
+ax.xaxis.set_major_locator(mticker.MultipleLocator(1))
+ax.grid(which='major', axis='x', linestyle='--', alpha=0.4)
+
+plt.xticks(fontsize=9)
 plt.yticks(fontsize=10)
 
 plt.tight_layout()
-
 save_path = os.path.join("plots", "stormwater_jurisdiction.png")
 plt.savefig(save_path, dpi=300)
 plt.show()
