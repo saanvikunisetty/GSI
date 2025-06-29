@@ -357,32 +357,38 @@ plt.show()
 
 #Private Property Structural Practices Frequency Plot
 
-df = load_and_prepare_df("cleaned_survey_data2.csv", rename_dict)
-
-private_structures = [
-    "Dry Wells", "Rain Barrels and Cisterns", "Rain Gardens"
+private_property_cols = [
+    "Dry Wells",
+    "Rain Barrels and Cisterns",
+    "Rain Gardens"
 ]
 
-totals = df[private_structures].sum().sort_values()
+totals = df[private_property_cols].sum().sort_values()
 
 plt.figure(figsize=(8, 4))
-plt.bar(totals.index, totals.values, color="#ff7f0e")
 
-plt.title("Private Property Structural Practices", fontsize=14, weight='bold')
-plt.ylabel("Number of Agencies")
+colors = ["#fdae6b", "#fd8d3c", "#e6550d"]
+plt.barh(totals.index, totals.values, color=colors)
+
+plt.title("Private Property Structural Practices Recommended", fontsize=14, weight='bold')
+plt.xlabel("Number of Agencies")
 
 ax = plt.gca()
-ax.yaxis.set_major_locator(mticker.MultipleLocator(5))
-ax.yaxis.set_minor_locator(mticker.MultipleLocator(1))
 
-ax.grid(which='minor', axis='y', linestyle='--', alpha=0.3)
-ax.grid(which='major', axis='y', linestyle='-', alpha=0.1)
+max_val = totals.max()
+ax.set_xlim(0, max_val + 5)  # Explicitly set x limits with padding
 
-plt.xticks(rotation=25, fontsize=10)
+ax.xaxis.set_major_locator(mticker.MultipleLocator(5))
+ax.xaxis.set_minor_locator(mticker.MultipleLocator(1))
+
+ax.grid(which='minor', axis='x', linestyle='--', alpha=0.3)
+ax.grid(which='major', axis='x', linestyle='-', alpha=0.1)
+
+plt.xticks(fontsize=10)
 plt.yticks(fontsize=10)
 
 plt.tight_layout()
 
-save_path = os.path.join("plots", "private_property_structures.png")
+save_path = os.path.join("plots", "private_property_structural_practices.png")
 plt.savefig(save_path, dpi=300)
 plt.show()
