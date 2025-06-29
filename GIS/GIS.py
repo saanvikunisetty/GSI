@@ -286,3 +286,36 @@ save_path = os.path.join("plots", "stormwater_activities.png")
 plt.savefig(save_path, dpi=300)
 plt.show()
 print("Saved:", save_path)
+
+#Stormwater Jurisdiction Area Frequency Plot
+
+df = load_and_prepare_df("cleaned_survey_data2.csv", rename_dict)
+
+jurisdiction_storm_cols = [
+    "Jurisdiction: Minnesota", "Jurisdiction: North Dakota"
+]
+
+totals = df[jurisdiction_storm_cols].sum().sort_values(ascending=True)
+
+plt.figure(figsize=(7, 4))
+colors = ["#2ca02c", "#98df8a"]
+plt.barh(totals.index, totals.values, color=colors)
+
+plt.title("Stormwater Jurisdiction Areas", fontsize=16, weight='bold')
+plt.xlabel("Number of Agencies")
+
+ax = plt.gca()
+ax.xaxis.set_major_locator(mticker.MultipleLocator(5))
+ax.xaxis.set_minor_locator(mticker.MultipleLocator(1))
+
+ax.grid(which='minor', axis='x', linestyle='--', alpha=0.3)
+ax.grid(which='major', axis='x', linestyle='-', alpha=0.1)
+
+plt.xticks(fontsize=10)
+plt.yticks(fontsize=10)
+
+plt.tight_layout()
+
+save_path = os.path.join("plots", "stormwater_jurisdiction.png")
+plt.savefig(save_path, dpi=300)
+plt.show()
