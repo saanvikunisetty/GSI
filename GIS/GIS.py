@@ -412,7 +412,7 @@ totals = df[mosquito_control_cols].sum().sort_values()
 
 plt.figure(figsize=(10, 6))
 
-base_color = np.array([231, 84, 128]) / 255  # A nice pink (RGB)
+base_color = np.array([231, 84, 128]) / 255 
 num_bars = len(totals)
 colors = [base_color * (0.5 + 0.5 * (i / (num_bars - 1))) for i in range(num_bars)]
 colors = [tuple(color) for color in colors]
@@ -438,5 +438,42 @@ plt.yticks(fontsize=10)
 plt.tight_layout()
 
 save_path = os.path.join("plots", "mosquito_control_activities.png")
+plt.savefig(save_path, dpi=300)
+plt.show()
+
+#Mosquito Jurisdiction Areas Frequency Plot
+
+df = load_and_prepare_df("cleaned_survey_data2.csv", rename_dict)
+
+mosquito_juris = [
+    "Mosquito Jurisdiction Minnesota", "Mosquito Jurisdiction North Dakota"
+]
+
+totals = df[mosquito_juris].sum().sort_values()
+
+plt.figure(figsize=(7, 4))
+base_color = np.array([220, 38, 38]) / 255  # strong red
+num_bars = len(totals)
+colors = [base_color * (0.5 + 0.5 * (i / max(1, num_bars - 1))) for i in range(num_bars)]
+colors = [tuple(color) for color in colors]
+
+plt.barh(totals.index, totals.values, color=colors)
+
+plt.title("Mosquito Control Jurisdiction Areas", fontsize=14, weight='bold')
+plt.xlabel("Number of Agencies")
+
+ax = plt.gca()
+ax.xaxis.set_major_locator(mticker.MultipleLocator(5))
+ax.xaxis.set_minor_locator(mticker.MultipleLocator(1))
+
+ax.grid(which='minor', axis='x', linestyle='--', alpha=0.3)
+ax.grid(which='major', axis='x', linestyle='-', alpha=0.1)
+
+plt.xticks(fontsize=10)
+plt.yticks(fontsize=10)
+
+plt.tight_layout()
+
+save_path = os.path.join("plots", "mosquito_jurisdiction.png")
 plt.savefig(save_path, dpi=300)
 plt.show()
