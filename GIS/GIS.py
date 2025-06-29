@@ -264,7 +264,8 @@ stormwater_cols = [
 totals = df[stormwater_cols].sum().sort_values(ascending=True)
 
 plt.figure(figsize=(10, 6))
-sns.barplot(x=totals.values, y=totals.index, palette="Blues_d")
+colors = ["#c6dbef", "#9ecae1", "#6baed6", "#4292c6", "#2171b5", "#08519c", "#08306b", "#041e42"]
+plt.barh(totals.index, totals.values, color=colors)
 
 ax = plt.gca()
 ax.xaxis.set_major_locator(mticker.MultipleLocator(5))  
