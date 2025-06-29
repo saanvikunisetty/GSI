@@ -319,3 +319,38 @@ plt.tight_layout()
 save_path = os.path.join("plots", "stormwater_jurisdiction.png")
 plt.savefig(save_path, dpi=300)
 plt.show()
+
+#Stormwater Control Objectives Frequency Plot
+
+df = load_and_prepare_df("cleaned_survey_data2.csv", rename_dict)
+
+control_cols = [
+    "Moderate Peak Runoff Flow", "Reduce Runoff Volume", "Control Trash and Floatables",
+    "Other Control Objectives", "Improve Runoff Water Quality"
+]
+
+totals = df[control_cols].sum().sort_values()
+
+plt.figure(figsize=(10, 6))
+
+colors = ["#dadaeb", "#bcbddc", "#9e9ac8", "#756bb1", "#54278f"]
+plt.barh(totals.index, totals.values, color=colors)
+
+plt.title("Stormwater Control Objectives in Retrofit Projects", fontsize=16, weight='bold')
+plt.xlabel("Number of Agencies")
+
+ax = plt.gca()
+ax.xaxis.set_major_locator(mticker.MultipleLocator(5))
+ax.xaxis.set_minor_locator(mticker.MultipleLocator(1))
+
+ax.grid(which='minor', axis='x', linestyle='--', alpha=0.3)
+ax.grid(which='major', axis='x', linestyle='-', alpha=0.1)
+
+plt.xticks(fontsize=10)
+plt.yticks(fontsize=10)
+
+plt.tight_layout()
+
+save_path = os.path.join("plots", "stormwater_control_objectives.png")
+plt.savefig(save_path, dpi=300)
+plt.show()
